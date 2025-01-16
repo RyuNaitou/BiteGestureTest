@@ -18,6 +18,8 @@ public class BiteFrequencyRecorder : MonoBehaviour
     private float elapsedTime = 0f;
     private float recordDuration = 5f; // 録音時間
 
+    int number = 0;
+
     private StringBuilder csvContent;
     private float[] spectrum;
 
@@ -38,6 +40,14 @@ public class BiteFrequencyRecorder : MonoBehaviour
             csvContent.Append($",{frequency:F0}");
         }
         csvContent.AppendLine();
+    }
+
+    void setupSaveOption()
+    {
+        //iCloudバックアップ不要設定
+        UnityEngine.iOS.Device.SetNoBackupFlag(Application.persistentDataPath);
+        //iOS   : /var/mobile/Containers/Data/Application/<guid>/Documents/Product名/hoge/
+        //MacOS : /Users/user名/Library/Application Support/DefaultCompany/Product名/hoge/
     }
 
     void Update()
@@ -182,7 +192,7 @@ public class BiteFrequencyRecorder : MonoBehaviour
             return;
         }
 
-        string path = Application.persistentDataPath + "/Recording.wav";
+        string path = Application.persistentDataPath + $"/Recording_{number++}.wav";
         Debug.Log($"録音データを保存中: {path}");
 
         // AudioClip を WAV ファイルに変換して保存
