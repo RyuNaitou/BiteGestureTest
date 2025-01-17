@@ -63,6 +63,7 @@ public class BiteChecker : MonoBehaviour
         {
             // マイクからの音声データを取得
             audioSource.GetOutputData(audioSamples, 0);
+            //audioSource.GetSpectrumData(spectrum, 0, FFTWindow.BlackmanHarris);
             ProcessAudioData(audioSamples);
         }
     }
@@ -74,7 +75,8 @@ public class BiteChecker : MonoBehaviour
         float[] spectrum = new float[sampleSize];
 
         // FFTの処理
-        AudioListener.GetOutputData(spectrum, 0);
+        //AudioListener.GetOutputData(spectrum, 0);
+        audioSource.GetSpectrumData(spectrum, 0, FFTWindow.BlackmanHarris);
 
         // スペクトルデータを元にエネルギー計算（これにより歯のかみ合わせ音を検出）
         DetectClench(spectrum);
