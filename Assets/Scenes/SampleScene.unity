@@ -424,7 +424,7 @@ GameObject:
   - component: {fileID: 876455009}
   - component: {fileID: 876455008}
   m_Layer: 0
-  m_Name: GameObject
+  m_Name: GameManager
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -446,6 +446,7 @@ MonoBehaviour:
   instructionText: {fileID: 879429706}
   timerText: {fileID: 1009543188}
   audioSource: {fileID: 1959320860}
+  micDropdown: {fileID: 0}
   outputFileName: BiteFrequencyData.csv
   sampleLength: 1024
   fftWindow: 2
