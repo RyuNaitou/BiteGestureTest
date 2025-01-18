@@ -4,7 +4,7 @@ using UnityEngine;
 
 public class BiteChecker : MonoBehaviour
 {
-    private AudioSource audioSource;
+    public AudioSource audioSource;
     private float[] audioSamples;
 
     public int targetFrequency = 7700; // 例えば得られた最適周波数帯
@@ -20,12 +20,16 @@ public class BiteChecker : MonoBehaviour
     {
         audioSource = GetComponent<AudioSource>();
 
+        audioSamples = new float[1024];
+
         string selectedDevice = Microphone.devices.Length > 0 ? Microphone.devices[0] : null;
         if (string.IsNullOrEmpty(selectedDevice))
         {
             Debug.LogWarning("使用可能なマイクがありません。");
             return;
         }
+
+        Debug.Log($"接続されたマイク：{selectedDevice}");
 
         // 録音開始
         audioSource.clip = Microphone.Start(selectedDevice, true, 10, 44100); // 44.1kHzサンプルレート
@@ -62,7 +66,7 @@ public class BiteChecker : MonoBehaviour
         if (Microphone.IsRecording(null))
         {
             // マイクからの音声データを取得
-            audioSource.GetOutputData(audioSamples, 0);
+            //audioSource.GetOutputData(audioSamples, 0);
             ProcessAudioData(audioSamples);
         }
     }
@@ -74,7 +78,8 @@ public class BiteChecker : MonoBehaviour
         float[] spectrum = new float[sampleSize];
 
         // FFTの処理
-        AudioListener.GetOutputData(spectrum, 0);
+        //audioSource.GetOutputData(spectrum, 0);
+        audioSource.GetSpectrumData(spectrum, 0, FFTWindow.BlackmanHarris);
 
         // スペクトルデータを元にエネルギー計算（これにより歯のかみ合わせ音を検出）
         DetectClench(spectrum);
@@ -100,7 +105,7 @@ public class BiteChecker : MonoBehaviour
             lastBiteTime = Time.time;
         }
 
-        if(lastBiteTime + 0.5f > Time.time)
+        if(lastBiteTime + 0.5f < Time.time)
         {
             threText.SetText("<color=#000000>なし");
         }
