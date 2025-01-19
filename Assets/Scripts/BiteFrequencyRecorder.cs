@@ -1,5 +1,6 @@
 using UnityEngine;
 using UnityEngine.UI;
+using TMPro;
 using System.IO;
 using System.Text;
 using System;
@@ -10,7 +11,7 @@ public class BiteFrequencyRecorder : MonoBehaviour
     public TMPro.TMP_Text instructionText;     // 合図を表示するテキスト
     public TMPro.TMP_Text timerText;           // 経過秒数を表示するテキスト
     public AudioSource audioSource;  // AudioSourceコンポーネント
-    public Dropdown micDropdown; // 追加: マイク選択用のDropdown
+    public TMP_Dropdown micDropdown; // 追加: マイク選択用のDropdown
     public string outputFileName = "BiteFrequencyData.csv"; // 出力するCSVファイル名
     public int sampleLength = 1024;  // スペクトルデータのサンプル数
     public FFTWindow fftWindow = FFTWindow.Hamming; // FFTウィンドウ関数
@@ -27,6 +28,8 @@ public class BiteFrequencyRecorder : MonoBehaviour
 
     void Start()
     {
+        setupSaveOption();
+
         startButton.onClick.AddListener(StartRecording);
         instructionText.SetText("準備完了。録音を開始してください。");
         timerText.SetText("経過時間: 0.0 秒");
@@ -46,6 +49,15 @@ public class BiteFrequencyRecorder : MonoBehaviour
         csvContent.AppendLine();
     }
 
+    void setupSaveOption()
+    {
+        //iCloudバックアップ不要設定
+        UnityEngine.iOS.Device.SetNoBackupFlag(Application.persistentDataPath);
+        //iOS   : /var/mobile/Containers/Data/Application/<guid>/Documents/Product名/hoge/
+        //MacOS : /Users/user名/Library/Application Support/DefaultCompany/Product名/hoge/
+    }
+
+
     // マイク一覧を取得し、Dropdown にセット
     void PopulateMicrophoneDropdown()
     {
@@ -53,20 +65,31 @@ public class BiteFrequencyRecorder : MonoBehaviour
         string[] devices = Microphone.devices;
         if (devices.Length == 0)
         {
-            micDropdown.options.Add(new Dropdown.OptionData("マイクが見つかりません"));
+            micDropdown.options.Add(new TMP_Dropdown.OptionData("マイクが見つかりません"));
             micDropdown.interactable = false;
             return;
         }
 
+
         foreach (string device in devices)
         {
-            micDropdown.options.Add(new Dropdown.OptionData(device));
+            micDropdown.options.Add(new TMP_Dropdown.OptionData(device));
         }
         micDropdown.interactable = true;
-        micDropdown.onValueChanged.AddListener(delegate { selectedMic = micDropdown.options[micDropdown.value].text; });
 
         // 初期選択
-        selectedMic = devices[0];
+        //selectedMic = devices[0];
+        selectedMic = devices[devices.Length-1];    // 最後の要素(Bluetoothマイクなど)
+
+        // selectedMic を TMP_Dropdown の初期選択に設定
+        int selectedIndex = Array.IndexOf(devices, selectedMic);
+        if (selectedIndex >= 0)
+        {
+            micDropdown.value = selectedIndex;
+        }
+
+        micDropdown.onValueChanged.AddListener(delegate { selectedMic = micDropdown.options[micDropdown.value].text; });
+
     }
 
     void Update()
@@ -162,7 +185,7 @@ public class BiteFrequencyRecorder : MonoBehaviour
         }
 
         // 録音位置を確認（録音が進行しているか確認）
-        int micPosition = Microphone.GetPosition(null);
+        int micPosition = Microphone.GetPosition(selectedMic);
         if (micPosition <= 0)
         {
             Debug.LogError("録音データが進行していません。録音位置の確認が必要です。");
