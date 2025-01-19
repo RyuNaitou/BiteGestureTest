@@ -8,11 +8,13 @@ public class RealtimeFrequencyDetector : MonoBehaviour
     public Button startButton;
     public TMP_Text startButtonText;
     public TMP_Text frequencyText;
+    public TMP_Text powerText;
     public TMP_Text statusText;
     public TMP_Dropdown micDropdown;
     public AudioSource audioSource;
     public TMP_Text thresholdText;
     public Slider thresholdSlider;
+    public Slider frequencySlider;
     public int sampleLength = 1024;
     public FFTWindow fftWindow = FFTWindow.BlackmanHarris;
     public float targetFrequency = 800f; // 監視する周波数 (Hz)
@@ -34,7 +36,9 @@ public class RealtimeFrequencyDetector : MonoBehaviour
         spectrum = new float[sampleLength];
         PopulateMicrophoneDropdown();
         thresholdSlider.onValueChanged.AddListener(UpdateThreshold);
+        frequencySlider.onValueChanged.AddListener(UpdateFrequency);
         UpdateThreshold(thresholdSlider.value);
+        UpdateFrequency(frequencySlider.value);
     }
 
     void PopulateMicrophoneDropdown()
@@ -117,7 +121,8 @@ public class RealtimeFrequencyDetector : MonoBehaviour
         int index = Mathf.RoundToInt(targetFrequency * sampleLength / (AudioSettings.outputSampleRate / 2));
         float power = spectrum[index];
         
-        frequencyText.SetText($"周波数({targetFrequency}Hz)のパワー：{power:F6}");
+        frequencyText.SetText($"周波数({targetFrequency}Hz)のパワー：");
+        powerText.SetText($"{power:F6}");
         
         if (index >= 0 && index < spectrum.Length && spectrum[index] > threshold)
         {
@@ -151,5 +156,12 @@ public class RealtimeFrequencyDetector : MonoBehaviour
     {
         threshold = value * 0.00001f;
         thresholdText.text = $"{threshold:F5}";
+    }
+
+    void UpdateFrequency(float value)
+    {
+        targetFrequency = value * 100;
+        frequencyText.SetText($"周波数({targetFrequency}Hz)のパワー：");
+        //frequencyText.text = $"周波数: {targetFrequency:F0} Hz";
     }
 }

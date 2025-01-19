@@ -8,7 +8,10 @@ EditorBuildSettings:
   - enabled: 1
     path: Assets/Scenes/RecordScene.unity
     guid: 9fc0d4010bbf28b4594072e72b8655ab
-  - enabled: 1
+  - enabled: 0
     path: Assets/Scenes/(Legacy)BiteCheckScene.unity
     guid: 01a3a3fbd4a7545b281e56c7514a5124
+  - enabled: 1
+    path: Assets/Scenes/BiteCheckScene.unity
+    guid: 6ac5aa3817eff1e4f83873d468981fc4
   m_configObjects: {}
