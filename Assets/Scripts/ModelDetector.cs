@@ -149,14 +149,17 @@ public class ModelDetector : MonoBehaviour
             unTriggerAction();
         }
 
+        input.Dispose();
+        output.Dispose();
+
 
 
 
         //int index = Mathf.RoundToInt(targetFrequency * sampleLength / (AudioSettings.outputSampleRate / 2));
         //float power = spectrum[index];
-        
+
         //frequencyText.SetText($"周波数({targetFrequency}Hz)のパワー：{power:F6}");
-        
+
         //if (index >= 0 && index < spectrum.Length && spectrum[index] > threshold)
         //{
         //    TriggerAction(power);
@@ -165,6 +168,11 @@ public class ModelDetector : MonoBehaviour
         //{
         //    unTriggerAction();
         //}
+    }
+
+    void OnDestroy()
+    {
+        worker.Dispose();
     }
 
     void TriggerAction()
