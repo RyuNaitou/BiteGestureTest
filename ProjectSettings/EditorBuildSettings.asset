@@ -14,4 +14,7 @@ EditorBuildSettings:
   - enabled: 1
     path: Assets/Scenes/BiteCheckScene.unity
     guid: 6ac5aa3817eff1e4f83873d468981fc4
+  - enabled: 1
+    path: Assets/Scenes/BiteCheckModelScene.unity
+    guid: 41b058b71a173a34a80e8c80fe3fb2a0
   m_configObjects: {}
